@@ -1,66 +1,139 @@
-# UST Bannu ID Card Generator
+# UST Bannu ID Card Generator & PSD Exporter
 
-A powerful, client-side web application designed to generate professional Student ID Cards for the **University of Science & Technology Bannu (USTB)**. This tool allows for real-time data entry, security pattern generation, and exporting to both **PNG** and **Layered PSD** formats.
+**Developed by [@muhibkhan123](https://github.com/muhibkhan123)**
 
-![Project Status](https://img.shields.io/badge/Status-Active-success)
-![Tech Stack](https://img.shields.io/badge/Built%20With-HTML5%20%7C%20Tailwind%20%7C%20JS-blue)
+![Project Status](https://img.shields.io/badge/Status-Stable-success)
+![License](https://img.shields.io/badge/License-MIT-blue)
+![Version](https://img.shields.io/badge/Version-1.0.0-orange)
 
-## 📸 Screenshots
+A comprehensive, client-side web application designed to generate professional Student ID Cards for the **University of Science & Technology Bannu (USTB)**. 
 
-![App Interface](https://via.placeholder.com/800x400?text=App+Interface+Screenshot)
+Unlike standard generators that only produce flat images, this tool features a **Layered PSD (Photoshop) Export** engine, allowing administrators to download fully editable files directly from the browser.
 
-## ✨ Features
+---
 
-* **Real-Time Preview:** Instantly see changes on the ID card as you type student details.
-* **Dual-Side Generation:** Generates both Front and Back sides of the ID card simultaneously.
-* **Security Pattern Randomizer:** Includes a built-in engine that generates random vector background patterns (Geometric, Waves, Grid, etc.) to simulate security watermarks.
-* **Layered PSD Export:** Unlike most web generators that only save images, this tool uses `ag-psd` to export fully editable **Layered Photoshop (PSD)** files.
-* **PNG Export:** High-quality PNG download using `html2canvas`.
-* **Custom Assets:**
-    * Upload Student Photos.
-    * Upload Digital Signatures.
-    * Upload Custom University Logos (Front and Back).
-* **Barcode Generation:** Automatically converts the Student ID into a visual Barcode.
-* **Responsive UI:** Built with Tailwind CSS for a clean, modern interface.
+## 📋 Table of Contents
 
-## 🛠️ Tech Stack
+- [Key Features](#-key-features)
+- [Tech Stack](#-tech-stack)
+- [Installation & Setup](#-installation--setup)
+- [Usage Guide](#-usage-guide)
+- [Troubleshooting (Common Issues)](#-troubleshooting-common-issues)
+- [Customization](#-customization-for-developers)
+- [Disclaimer](#-disclaimer)
 
-* **Core:** HTML5, JavaScript (ES6+).
-* **Styling:** [Tailwind CSS](https://tailwindcss.com/) (via CDN).
-* **Icons:** FontAwesome.
-* **Fonts:** Google Fonts (Roboto Condensed & Libre Barcode 39).
-* **Libraries:**
-    * `html2canvas` - For capturing the DOM as a flat PNG image.
-    * `ag-psd` - For constructing and writing layered PSD files directly in the browser.
+---
 
-## 🚀 How to Run
+## ✨ Key Features
 
-Since this is a client-side application using CDNs, no server setup is required.
+### 1. Advanced Export Options
+* **Layered PSD Export:** Uses the `ag-psd` library to generate Photoshop files where text, background patterns, and images remain on separate layers. This allows for post-processing adjustments.
+* **High-Res PNG:** Uses `html2canvas` to capture a pixel-perfect render of the card for quick printing.
 
-1.  **Clone the repository:**
+### 2. Security & Design
+* **Pattern Randomizer:** Includes a "Pick Random Pattern" button that generates complex vector background patterns (Waves, Geometric, Isometric, etc.) to simulate security watermarks.
+* **Dynamic Barcodes:** Automatically converts the Student ID into a scannable Code 39 barcode.
+
+### 3. Dynamic Inputs
+* **Dual-Side Generation:** Updates Front and Back cards simultaneously in real-time.
+* **Image Handling:** Supports drag-and-drop or file selection for:
+    * Student Photo
+    * Registrar Signature
+    * University Logos (Front & Back)
+
+---
+
+## 🛠 Tech Stack
+
+This project is built entirely on the **Client-Side**, meaning it requires no backend server (Node.js/PHP) to run.
+
+* **Structure:** HTML5
+* **Styling:** [Tailwind CSS](https://tailwindcss.com/) (via CDN)
+* **Icons:** FontAwesome
+* **Fonts:** Google Fonts (Roboto Condensed, Libre Barcode 39)
+* **Core Libraries:**
+    * `html2canvas.js` (Screen capture)
+    * `ag-psd.js` (PSD construction)
+
+---
+
+## 🚀 Installation & Setup
+
+Since this is a standalone HTML file, installation is instant.
+
+### Option 1: Git Clone
+1.  Open your terminal/command prompt.
+2.  Run the following command:
     ```bash
-    git clone [https://github.com/your-username/ust-id-card-generator.git](https://github.com/your-username/ust-id-card-generator.git)
+    git clone [https://github.com/muhibkhan123/ust-id-card-generator.git](https://github.com/muhibkhan123/ust-id-card-generator.git)
     ```
-2.  **Open the file:**
-    Navigate to the folder and open `index.html` in any modern web browser (Chrome, Edge, Firefox).
-3.  **Internet Connection:**
-    Ensure you are connected to the internet, as the application loads styles and libraries via CDN.
+3.  Navigate to the folder:
+    ```bash
+    cd ust-id-card-generator
+    ```
+4.  Open `index.html` in your browser (Chrome, Edge, or Firefox recommended).
+
+### Option 2: Direct Download
+1.  Download the ZIP file from this repository.
+2.  Extract it to your desktop.
+3.  Double-click `index.html`.
+
+> **⚠️ Important:** You must have an active internet connection when opening the file, as it loads Tailwind CSS and Fonts from online servers (CDNs).
+
+---
 
 ## 📖 Usage Guide
 
-1.  **University Details:** Modify the university name or address if needed (defaults to UST Bannu).
-2.  **Student Details:** Enter the Name, Father's Name, CNIC, and Session.
-3.  **Photos & Logos:** Click the "Choose File" buttons to upload the student's photo and the Registrar's signature.
-4.  **Pattern:** Click **"Pick Random Pattern"** to change the background security design.
-5.  **Adjust Back Spacing:** Use the slider to adjust the text spacing on the back of the card if the content overlaps.
-6.  **Download:**
-    * Click **Download PNG** for a quick image file.
-    * Click **Layered PSD** to edit text and layers later in Photoshop.
+1.  **Enter Student Data:** Fill in the form on the left side (Name, FName, Discipline, etc.). The card preview updates instantly.
+2.  **Upload Photos:**
+    * Click **"Student Photo"** to upload the student's picture.
+    * Click **"Signature"** to upload the Registrar's signature (transparent PNG recommended).
+3.  **Security Pattern:** If the background looks too plain, click the **"Pick Random Pattern"** button until you find a design you like.
+4.  **Adjust Back Layout:** If the address or details on the back are overlapping, use the **"Back Bottom Spacing"** slider to adjust the padding.
+5.  **Download:**
+    * **Download PNG:** For immediate printing.
+    * **Layered PSD:** If you need to edit the text later in Photoshop.
 
-## 📂 Project Structure
+---
 
-```text
-/
-├── index.html       # The main application file containing HTML, CSS, and JS
-├── README.md        # Project documentation
-└── (assets)         # (Optional) If you decide to host images locally later
+## 🔧 Troubleshooting (Common Issues)
+
+If you face any problems, check this list first.
+
+### 1. "The styling/design looks broken."
+* **Cause:** You are likely offline.
+* **Solution:** This tool uses Tailwind CSS via a CDN link. Connect to the internet and refresh the page to load the styles.
+
+### 2. "The exported image is blank" or "Security Error".
+* **Cause:** Browser security (CORS) restricts saving images if they are loaded from external URLs without permission.
+* **Solution:** * Ensure you are uploading images using the "Choose File" buttons rather than trying to modify the HTML `src` code directly.
+    * If you are a developer, try running the file on a local server (e.g., Live Server in VS Code) instead of just double-clicking the HTML file.
+
+### 3. "The Barcode isn't showing in the downloaded image."
+* **Cause:** The font file hasn't finished loading before the download started.
+* **Solution:** Wait 2-3 seconds after opening the page before clicking download.
+
+---
+
+## 💻 Customization (For Developers)
+
+If you want to change the default values (so you don't have to type them every time):
+
+1.  Open `index.html` in a code editor (like VS Code or Notepad++).
+2.  Search for `value=` inside the input tags.
+    * *Example:* To change the default session from "Fall-2022" to "Spring-2025":
+    * **Find:** `<input type="text" id="inSession" value="Fall-2022" ...>`
+    * **Replace with:** `<input type="text" id="inSession" value="Spring-2025" ...>`
+3.  Save the file and refresh your browser.
+
+---
+
+## ⚠️ Disclaimer
+
+This tool is created for **educational purposes** and to assist authorized administrative staff.
+* Do not use this tool to generate fraudulent identification.
+* The developer (@muhibkhan123) is not responsible for misuse of this code.
+
+---
+
+*Star this repository if you found it useful! ⭐*
