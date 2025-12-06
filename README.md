@@ -4,7 +4,7 @@
 
 ![Project Status](https://img.shields.io/badge/Status-Stable-success)
 ![License](https://img.shields.io/badge/License-MIT-blue)
-![Version](https://img.shields.io/badge/Version-1.0.0-orange)
+![Version](https://img.shields.io/badge/Version-3.1.0-orange)
 
 A comprehensive, client-side web application designed to generate professional Student ID Cards for the **University of Science & Technology Bannu (USTB)**. 
 
