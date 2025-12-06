@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UST Bannu ID Card Generator</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Libre+Barcode+39+Text&display=swap" rel="stylesheet">
+    <!-- html2canvas for PNG download -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <!-- ag-psd for Layered PSD download -->
+    <script src="https://unpkg.com/ag-psd/dist/bundle.js"></script>
+
+    <style>
+        body {
+            font-family: 'Roboto Condensed', sans-serif;
+            background-color: #f0f2f5;
+        }
+
+        /* CARD DIMENSIONS - CR80 Standard Landscape */
+        .id-card-wrapper {
+            width: 480px; 
+            height: 302px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            background-color: white;
+            border: 1px solid #d1d5db;
+        }
+
+        /* SECURITY BACKGROUND CONTAINER */
+        .security-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Sit above white background */
+            pointer-events: none;
+        }
+
+        /* UST HEADER STYLE - BLUE */
+        .ust-header {
+            background-color: #2c2c7b; /* Original Blue */
+            color: white;
+            text-align: center;
+            padding: 4px 0;
+            position: relative;
+            z-index: 20; 
+            height: 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-bottom: 2px solid #94a3b8;
+        }
+        
+        .ust-header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .ust-header p {
+            font-size: 11px;
+            margin-top: 2px;
+            color: #ffffff;
+        }
+
+        /* PHOTO BOX */
+        .photo-frame {
+            width: 100px;
+            height: 120px;
+            background-color: #e2e8f0;
+            border: 1px solid #94a3b8;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            overflow: hidden;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* KEY-VALUE GRID */
+        .info-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            column-gap: 8px;
+            row-gap: 3px;
+            font-size: 13px;
+            line-height: 1.2;
+            color: #0f172a;
+            position: relative;
+            z-index: 10;
+        }
+
+        .info-label {
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .info-val {
+            font-weight: 600;
+            color: #000;
+        }
+
+        /* SESSION TAG */
+        .session-tag {
+            background-color: #2c2c7b;
+            color: white;
+            padding: 4px 10px;
+            font-weight: 600;
+            font-size: 10px;
+            border-radius: 12px;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            display: inline-block;
+        }
+
+        /* FORM STYLES */
+        .form-input {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .form-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 2px;
+            display: block;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-slate-800">UST BANNU CARD GENERATOR</h1>
+            <p class="text-slate-500 text-sm">Create Front and Back ID Cards with Layered PSD Support</p>
+        </header>
+
+        <div class="flex flex-col lg:flex-row gap-8 justify-center items-start">
+            
+            <!-- INPUT FORM -->
+            <div class="w-full lg:w-1/3 bg-white p-6 rounded-lg shadow-md">
+                
+                <!-- University Details Section -->
+                <h2 class="text-lg font-bold mb-4 border-b pb-2">University Details</h2>
+                <div class="mb-4 bg-slate-50 p-3 rounded border border-slate-200">
+                    <label class="form-label">University Name</label>
+                    <input type="text" id="inUniName" value="UNIVERSITY OF SCIENCE & TECHNOLOGY BANNU" class="form-input" oninput="updateCards()">
+                    
+                    <label class="form-label">University Address</label>
+                    <input type="text" id="inUniAddr" value="Bannu Khyber Pakhtunkhwa, Pakistan" class="form-input" oninput="updateCards()">
+                </div>
+
+                <h2 class="text-lg font-bold mb-4 border-b pb-2">Student Details</h2>
+                
+                <!-- Pattern Randomizer Button -->
+                <button onclick="randomizePattern()" class="w-full mb-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded shadow transition duration-200 flex justify-center items-center gap-2">
+                    <i class="fas fa-random"></i> Pick Random Pattern
+                </button>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="form-label">S/ID (Student ID)</label>
+                        <input type="text" id="inId" value="14623" class="form-input" oninput="updateCards()">
+                    </div>
+                    <div>
+                        <label class="form-label">Session Tag</label>
+                        <input type="text" id="inSession" value="Fall-2022" class="form-input" oninput="updateCards()">
+                    </div>
+                </div>
+
+                <label class="form-label">Discipline/Dept</label>
+                <input type="text" id="inDisc" value="BS Zoology" class="form-input" oninput="updateCards()">
+
+                <label class="form-label">Student Name</label>
+                <input type="text" id="inName" value="Rasool Khan" class="form-input" oninput="updateCards()">
+
+                <label class="form-label">Father's Name</label>
+                <input type="text" id="inFname" value="GULISTAN" class="form-input" oninput="updateCards()">
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="form-label">Contact No</label>
+                        <input type="text" id="inContact" value="923329641268" class="form-input" oninput="updateCards()">
+                    </div>
+                    <div>
+                        <label class="form-label">CNIC No</label>
+                        <input type="text" id="inCnic" value="21506-5189734-7" class="form-input" oninput="updateCards()">
+                    </div>
+                </div>
+
+                <label class="form-label">Address</label>
+                <textarea id="inAddr" rows="2" class="form-input resize-none" oninput="updateCards()">Dande Darpakhel North Waziristan Miranshah NWTD</textarea>
+
+                <!-- Back Spacing Slider -->
+                <div class="mb-4 bg-slate-100 p-2 rounded border border-slate-200">
+                    <label class="form-label flex justify-between">
+                        <span>Back Bottom Spacing</span>
+                        <span id="spacingVal" class="text-blue-600">80px</span>
+                    </label>
+                    <input type="range" id="inSpacing" min="10" max="150" value="80" class="w-full h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer accent-blue-600" oninput="updateCards()">
+                </div>
+
+                <!-- Separate Logo Inputs -->
+                <div class="grid grid-cols-2 gap-3 mb-2">
+                    <div>
+                        <label class="form-label text-blue-600 font-bold"><i class="fas fa-image"></i> Front Logo</label>
+                        <input type="file" id="upLogoFront" accept="image/*" class="text-xs w-full border p-1 rounded" onchange="handleImage(this, 'logoFront')">
+                    </div>
+                    <div>
+                        <label class="form-label text-blue-600 font-bold"><i class="fas fa-image"></i> Back Logo</label>
+                        <input type="file" id="upLogoBack" accept="image/*" class="text-xs w-full border p-1 rounded" onchange="handleImage(this, 'logoBack')">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="form-label">Valid Upto</label>
+                        <input type="text" id="inValid" value="Dec, 2026" class="form-input" oninput="updateCards()">
+                    </div>
+                    <div>
+                        <label class="form-label">Student Photo</label>
+                        <input type="file" id="upPhoto" accept="image/*" class="text-xs" onchange="handleImage(this, 'cardPhoto')">
+                    </div>
+                </div>
+                
+                <div class="mt-4 pt-4 border-t">
+                     <label class="form-label">Signature (For Back)</label>
+                     <input type="file" id="upSig" accept="image/*" class="text-xs mb-2" onchange="handleImage(this, 'cardSig')">
+                </div>
+            </div>
+
+            <!-- PREVIEWS -->
+            <div class="w-full lg:w-auto flex flex-col gap-6 items-center">
+                
+                <!-- FRONT CARD PREVIEW -->
+                <div class="flex flex-col items-center">
+                    <span class="text-xs font-bold text-slate-400 uppercase mb-1">Front Side</span>
+                    <div id="frontCard" class="id-card-wrapper">
+                        <!-- BG Pattern -->
+                        <div class="security-bg">
+                            <svg id="svgPatternFront" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <pattern id="secPatFront" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                                        <g fill="#1e3a8a" fill-opacity="0.10">
+                                            <!-- Pattern Path (Default: Leaves) -->
+                                            <path id="patPathFront" d="M20 38 C 10 28 10 12 20 2 C 30 12 30 28 20 38 Z M 0 18 C -10 8 -10 -8 0 -18 C 10 -8 10 8 0 18 Z M 40 18 C 30 8 30 -8 40 -18 C 50 -8 50 8 40 18 Z M 0 58 C -10 48 -10 32 0 22 C 10 32 10 48 0 58 Z M 40 58 C 30 48 30 32 40 22 C 50 32 50 48 40 58 Z"/>
+                                        </g>
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" fill="url(#secPatFront)" />
+                            </svg>
+                        </div>
+                        
+                        <!-- Header -->
+                        <div class="ust-header">
+                            <h1 id="outUniNameFront">UNIVERSITY OF SCIENCE & TECHNOLOGY BANNU</h1>
+                            <p id="outUniAddrFront">Bannu Khyber Pakhtunkhwa, Pakistan</p>
+                        </div>
+
+                        <!-- Content Area -->
+                        <div class="relative z-10 p-3 flex h-full">
+                            <!-- Left: Logo & Photo -->
+                            <div class="w-[120px] flex flex-col items-center mr-3 pt-1">
+                                <!-- Logo IMG -->
+                                <div class="w-16 h-18 mb-2 relative flex items-center justify-center z-10">
+                                    <img id="logoFront" src="https://via.placeholder.com/150?text=USTB+LOGO" crossorigin="anonymous" class="w-full h-full object-contain drop-shadow-md">
+                                </div>
+                                <!-- Photo -->
+                                <div class="photo-frame">
+                                    <img id="cardPhoto" src="https://via.placeholder.com/100x120?text=PHOTO" crossorigin="anonymous" class="w-full h-full object-cover">
+                                </div>
+                                <!-- Valid Date (Moved slightly up to match reference) -->
+                                <div class="mt-2 text-center leading-none relative z-10">
+                                    <span class="text-[11px] font-bold text-red-600">Valid-upto:</span>
+                                    <span id="outValid" class="text-[11px] font-bold text-black ml-1">Dec, 2026</span>
+                                </div>
+                            </div>
+
+                            <!-- Right: Details -->
+                            <div class="flex-1 pt-2">
+                                <!-- Top Row: SID & Tag -->
+                                <div class="flex justify-between items-start mb-1 relative z-10">
+                                    <div class="text-sm">
+                                        <span class="font-bold">S/ID:</span>
+                                        <span id="outId" class="font-bold ml-2 text-lg">14623</span>
+                                    </div>
+                                    <div id="outSession" class="session-tag">Fall-2022</div>
+                                </div>
+
+                                <!-- Details Grid -->
+                                <div class="info-grid">
+                                    <span class="info-label text-red-700">Discipline:</span>
+                                    <span id="outDisc" class="info-val">BS Zoology</span>
+
+                                    <span class="info-label">Name:</span>
+                                    <span id="outName" class="info-val">Rasool Khan</span>
+
+                                    <span class="info-label">FName:</span>
+                                    <span id="outFname" class="info-val uppercase">GULISTAN</span>
+
+                                    <span class="info-label">C/No:</span>
+                                    <span id="outContact" class="info-val">923329641268</span>
+
+                                    <span class="info-label">CNIC No:</span>
+                                    <span id="outCnic" class="info-val">21506-5189734-7</span>
+
+                                    <span class="info-label">Address:</span>
+                                    <span id="outAddr" class="info-val leading-tight">Dande Darpakhel North Waziristan Miranshah NWTD</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Strip (Transparent) -->
+                        <div class="absolute bottom-0 w-full text-center pb-1 z-20">
+                            <p class="text-[10px] text-slate-700 font-bold tracking-tight">
+                                Ph: 0092-928-633817-18 Fax: 0092-928-633825
+                            </p>
+                            <p class="text-[10px] text-slate-700 font-bold">www.ustb.edu.pk</p>
+                        </div>
+                    </div>
+                    
+                    <!-- DOWNLOAD BUTTONS: PNG and PSD -->
+                    <div class="flex gap-2 mt-2">
+                        <button onclick="downloadSide('frontCard', 'UST_Front.png')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm py-1.5 px-4 rounded shadow flex items-center gap-2">
+                            <i class="fas fa-download"></i> Download PNG
+                        </button>
+                        <button onclick="generateLayeredPSD('front')" class="bg-purple-600 hover:bg-purple-700 text-white text-sm py-1.5 px-4 rounded shadow flex items-center gap-2">
+                            <i class="fas fa-layer-group"></i> Layered PSD
+                        </button>
+                    </div>
+                </div>
+
+                <!-- BACK CARD PREVIEW -->
+                <div class="flex flex-col items-center">
+                    <span class="text-xs font-bold text-slate-400 uppercase mb-1">Back Side</span>
+                    <div id="backCard" class="id-card-wrapper">
+                         <!-- BG Pattern -->
+                         <div class="security-bg">
+                            <svg id="svgPatternBack" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <pattern id="secPatBack" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                                        <g fill="#1e3a8a" fill-opacity="0.10">
+                                             <!-- Pattern Path -->
+                                             <path id="patPathBack" d="M20 38 C 10 28 10 12 20 2 C 30 12 30 28 20 38 Z M 0 18 C -10 8 -10 -8 0 -18 C 10 -8 10 8 0 18 Z M 40 18 C 30 8 30 -8 40 -18 C 50 -8 50 8 40 18 Z M 0 58 C -10 48 -10 32 0 22 C 10 32 10 48 0 58 Z M 40 58 C 30 48 30 32 40 22 C 50 32 50 48 40 58 Z"/>
+                                        </g>
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" fill="url(#secPatBack)" />
+                            </svg>
+                        </div>
+
+                        <!-- Header -->
+                        <div class="ust-header">
+                            <h1 id="outUniNameBack">UNIVERSITY OF SCIENCE & TECHNOLOGY BANNU</h1>
+                        </div>
+
+                        <!-- Content Box with Dynamic Padding -->
+                        <div id="backContentBox" class="relative z-10 h-full flex flex-col p-4" style="padding-bottom: 80px;">
+                            
+                            <!-- Middle Content -->
+                            <div class="flex-1 flex items-center justify-between px-4">
+                                <!-- Left: Small Logo -->
+                                <div class="w-20 h-24 opacity-80 flex items-center justify-center">
+                                    <img id="logoBack" src="https://via.placeholder.com/150?text=USTB+LOGO" crossorigin="anonymous" class="max-w-full max-h-full object-contain">
+                                </div>
+
+                                <!-- Right: Signature & Authority -->
+                                <div class="flex flex-col items-center w-48">
+                                    <p class="text-sm font-bold text-slate-700 italic mb-1">Issuing Authority</p>
+                                    <div class="h-12 w-32 flex items-end justify-center mb-1">
+                                        <img id="cardSig" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgNDAiPjxwYXRoIGQ9Ik0xMCwzMCBRMzAsMTAgNTAsMjUgVDkwLDIwIiBzdHJva2U9IiMzMzQiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==" class="h-full object-contain">
+                                    </div>
+                                    <div class="w-full border-b-2 border-blue-400 mb-1"></div>
+                                    <p class="text-sm font-bold text-slate-800 uppercase tracking-widest">REGISTRAR</p>
+                                </div>
+                            </div>
+
+                            <!-- Barcode Section -->
+                            <div class="flex flex-col items-center mb-1">
+                                <div class="text-5xl text-black" style="font-family: 'Libre Barcode 39 Text', cursive;" id="outBarcode">*14623*</div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Footer Info -->
+                        <div class="absolute bottom-2 left-0 w-full text-center z-20">
+                            <p class="text-[11px] font-bold text-red-600 uppercase mb-0.5">Contact For Information</p>
+                            <p class="text-[10px] text-slate-800 font-bold leading-tight">
+                                Office of Printing & Publications UST Bannu<br>
+                                Ph: 0092-928-633817-18 Ext: 111
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- DOWNLOAD BUTTONS: PNG and PSD -->
+                    <div class="flex gap-2 mt-2">
+                         <button onclick="downloadSide('backCard', 'UST_Back.png')" class="bg-slate-600 hover:bg-slate-700 text-white text-sm py-1.5 px-4 rounded shadow flex items-center gap-2">
+                            <i class="fas fa-download"></i> Download PNG
+                        </button>
+                        <button onclick="generateLayeredPSD('back')" class="bg-purple-600 hover:bg-purple-700 text-white text-sm py-1.5 px-4 rounded shadow flex items-center gap-2">
+                            <i class="fas fa-layer-group"></i> Layered PSD
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // EXPANDED PATTERN COLLECTION
+        const patterns = [
+            // 1. Leaves (Default)
+            "M20 38 C 10 28 10 12 20 2 C 30 12 30 28 20 38 Z M 0 18 C -10 8 -10 -8 0 -18 C 10 -8 10 8 0 18 Z M 40 18 C 30 8 30 -8 40 -18 C 50 -8 50 8 40 18 Z M 0 58 C -10 48 -10 32 0 22 C 10 32 10 48 0 58 Z M 40 58 C 30 48 30 32 40 22 C 50 32 50 48 40 58 Z",
+            // 2. Geometric / Squares
+            "M0 0h10v10H0zM20 20h10v10H20zM0 20h10v10H0zM20 0h10v10H20z",
+            // 3. Circles / Polka Dots
+            "M20 20 m-6 0 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M0 0 m-6 0 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M40 0 m-6 0 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M0 40 m-6 0 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M40 40 m-6 0 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0",
+            // 4. Diamonds / Rhombus
+            "M20 0 L30 10 L20 20 L10 10 Z M20 20 L30 30 L20 40 L10 30 Z M0 10 L10 20 L0 30 L-10 20 Z M40 10 L50 20 L40 30 L30 20 Z",
+            // 5. Waves
+            "M0 20 Q10 10 20 20 T40 20 T60 20 M0 0 Q10 -10 20 0 T40 0 T60 0 M0 40 Q10 30 20 40 T40 40 T60 40",
+            // 6. Crosshatch / Grid
+            "M0 0 L40 40 M40 0 L0 40 M20 0 L20 40 M0 20 L40 20",
+            // 7. Isometric Cubes
+            "M0 10 L20 20 L40 10 V30 L20 40 L0 30 Z M20 20 V40 M0 10 L20 0 L40 10",
+            // 8. Bank Note Waves (Guilloche-style) - "small like wave"
+            "M0 5 Q 10 20 20 5 T 40 5 M0 15 Q 10 30 20 15 T 40 15 M0 25 Q 10 40 20 25 T 40 25 M0 35 Q 10 50 20 35 T 40 35",
+            // 9. Hexagons Tiled
+            "M20 0 L40 10 V30 L20 40 L0 30 V10 Z",
+            // 10. Intersecting Rings
+            "M20 0 A20 20 0 1 1 20 40 A20 20 0 1 1 20 0",
+            // 11. Houndstooth Simplified
+            "M0 0 L20 20 L0 40 L20 40 L40 20 L40 0 Z",
+            // 12. Micro-Grid
+            "M2 2 h2 v2 h-2 z M22 2 h2 v2 h-2 z M2 22 h2 v2 h-2 z M22 22 h2 v2 h-2 z",
+            // 13. Fine Diagonal Stripe
+            "M0 40 L40 0 M20 40 L40 20 M0 20 L20 0"
+        ];
+
+        function randomizePattern() {
+            // Pick a random index
+            const randomIndex = Math.floor(Math.random() * patterns.length);
+            const selectedPath = patterns[randomIndex];
+            
+            // Apply to Front
+            const pathFront = document.getElementById('patPathFront');
+            if(pathFront) pathFront.setAttribute('d', selectedPath);
+
+            // Apply to Back
+            const pathBack = document.getElementById('patPathBack');
+            if(pathBack) pathBack.setAttribute('d', selectedPath);
+        }
+
+        function updateCards() {
+            // New University Fields
+            setTxt('outUniNameFront', 'inUniName');
+            setTxt('outUniAddrFront', 'inUniAddr');
+            setTxt('outUniNameBack', 'inUniName');
+
+            setTxt('outId', 'inId');
+            setTxt('outSession', 'inSession');
+            setTxt('outDisc', 'inDisc');
+            setTxt('outName', 'inName');
+            setTxt('outFname', 'inFname');
+            setTxt('outContact', 'inContact');
+            setTxt('outCnic', 'inCnic');
+            setTxt('outAddr', 'inAddr');
+            setTxt('outValid', 'inValid');
+            
+            // Barcode formatting
+            const idVal = document.getElementById('inId').value;
+            const barEl = document.getElementById('outBarcode');
+            if(barEl) barEl.innerText = '*' + idVal + '*';
+
+            // Spacing
+            const spacing = document.getElementById('inSpacing').value;
+            document.getElementById('backContentBox').style.paddingBottom = spacing + 'px';
+            document.getElementById('spacingVal').textContent = spacing + 'px';
+        }
+
+        function setTxt(outId, inId) {
+            const el = document.getElementById(outId);
+            const val = document.getElementById(inId).value;
+            if (el) el.innerText = val;
+        }
+
+        function handleImage(input, targetId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(targetId).src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function downloadSide(elementId, filename) {
+            const el = document.getElementById(elementId);
+            
+            // Wait for fonts to be ready to ensure barcode prints
+            document.fonts.ready.then(() => {
+                const options = {
+                    scale: 3, 
+                    useCORS: true,
+                    allowTaint: true, // Allow cross-origin images to be drawn
+                    backgroundColor: null, // Transparent to respect CSS
+                    logging: false
+                };
+
+                html2canvas(el, options).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = filename;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                }).catch(err => {
+                    console.error("Canvas Error:", err);
+                    alert("Download failed. Please check if you are using local images without a server.");
+                });
+            });
+        }
+        
+        async function generateLayeredPSD(side) {
+            try {
+                const width = 480;
+                const height = 302;
+                
+                // Helper to get image data as Layer
+                const getImageLayer = async (imgId, name, x, y, w, h) => {
+                    const imgEl = document.getElementById(imgId);
+                    if (!imgEl || !imgEl.src) return null;
+                    
+                    const c = document.createElement('canvas');
+                    c.width = width;
+                    c.height = height;
+                    const ctx = c.getContext('2d');
+                    
+                    const img = new Image();
+                    img.crossOrigin = "Anonymous";
+                    img.src = imgEl.src;
+                    
+                    return new Promise(resolve => {
+                        img.onload = () => {
+                            ctx.drawImage(img, x, y, w, h);
+                            resolve({
+                                name: name,
+                                canvas: c
+                            });
+                        };
+                        img.onerror = () => resolve(null);
+                    });
+                };
+
+                // Helper to get Pattern Layer (Rasterize SVG)
+                const getPatternLayer = async (svgId) => {
+                    const svgEl = document.getElementById(svgId);
+                    if (!svgEl) return null;
+                    
+                    const svgData = new XMLSerializer().serializeToString(svgEl);
+                    const img = new Image();
+                    const svgBlob = new Blob([svgData], {type: "image/svg+xml;charset=utf-8"});
+                    const url = URL.createObjectURL(svgBlob);
+                    
+                    img.src = url;
+                    
+                    const c = document.createElement('canvas');
+                    c.width = width;
+                    c.height = height;
+                    const ctx = c.getContext('2d');
+                    
+                    return new Promise(resolve => {
+                        img.onload = () => {
+                            ctx.drawImage(img, 0, 0, width, height);
+                            URL.revokeObjectURL(url);
+                            resolve({
+                                name: "Security Pattern",
+                                canvas: c,
+                                opacity: 255 // full opacity, handled by svg fill opacity
+                            });
+                        };
+                        img.onerror = () => resolve(null);
+                    });
+                };
+
+                // Helper to create Text Layer Object
+                const createTextLayer = (text, name, x, y, fontSize, fontColor = {r:0, g:0, b:0}, fontName = "ArialMT", align = "left") => {
+                    return {
+                        name: name,
+                        text: {
+                            text: text,
+                            transform: [1, 0, 0, 1, x, y], 
+                            style: {
+                                fontSize: fontSize,
+                                fillColor: fontColor,
+                                fontMT: fontName
+                            },
+                            paragraphStyle: { justification: align }
+                        }
+                    };
+                };
+
+                const children = [];
+
+                // 1. BACKGROUND (White)
+                const bgCanvas = document.createElement('canvas');
+                bgCanvas.width = width;
+                bgCanvas.height = height;
+                const bgCtx = bgCanvas.getContext('2d');
+                bgCtx.fillStyle = "#ffffff";
+                bgCtx.fillRect(0, 0, width, height);
+                children.push({ name: "Background Color", canvas: bgCanvas });
+
+                // 2. PATTERN
+                const patternLayer = await getPatternLayer(side === 'front' ? 'svgPatternFront' : 'svgPatternBack');
+                if (patternLayer) children.push(patternLayer);
+
+                // 3. HEADER (Blue)
+                const headerCanvas = document.createElement('canvas');
+                headerCanvas.width = width;
+                headerCanvas.height = height;
+                const hCtx = headerCanvas.getContext('2d');
+                hCtx.fillStyle = "#497fff";
+                hCtx.fillRect(0, 0, width, 45); 
+                children.push({ name: "Header Blue Bar", canvas: headerCanvas });
+
+                // FRONT SIDE LAYERS
+                if (side === 'front') {
+                    // Header Text
+                    children.push(createTextLayer(document.getElementById('inUniName').value, "Header: Uni Name", width/2, 28, 18, {r:255, g:255, b:255}, "Arial-BoldMT", "center"));
+                    children.push(createTextLayer(document.getElementById('inUniAddr').value, "Header: Address", width/2, 42, 11, {r:255, g:255, b:255}, "ArialMT", "center"));
+
+                    // Logo
+                    const logoLayer = await getImageLayer('logoFront', 'Logo', 30, 55, 60, 70); 
+                    if (logoLayer) children.push(logoLayer);
+
+                    // Photo Frame (Gray Box)
+                    const frameCanvas = document.createElement('canvas');
+                    frameCanvas.width = width;
+                    frameCanvas.height = height;
+                    const fCtx = frameCanvas.getContext('2d');
+                    fCtx.fillStyle = "#e2e8f0";
+                    fCtx.fillRect(40, 130, 100, 120); // x=40, y=130, w=100, h=120
+                    children.push({ name: "Photo Frame", canvas: frameCanvas });
+
+                    // Photo
+                    const photoLayer = await getImageLayer('cardPhoto', 'Student Photo', 40, 130, 100, 120);
+                    if (photoLayer) children.push(photoLayer);
+
+                    // Valid Upto
+                    children.push(createTextLayer("Valid-upto: " + document.getElementById('inValid').value, "Valid Date", 40, 265, 11, {r:0, g:0, b:0}, "Arial-BoldMT"));
+
+                    // DATA FIELDS (Right Side)
+                    const x_label = 160;
+                    const x_val = 160; // Labels and values in same block or separate? Let's use separate lines effectively
+                    
+                    // S/ID & Session
+                    children.push(createTextLayer("S/ID: " + document.getElementById('inId').value, "S/ID", x_label, 70, 16, {r:0, g:0, b:0}, "Arial-BoldMT"));
+                    // Session Tag (As Text for simplicity in PSD)
+                    children.push(createTextLayer(document.getElementById('inSession').value, "Session Tag", 380, 70, 12, {r:255, g:255, b:255}, "Arial-BoldMT")); // White text, needs blue box backing ideally. 
+                    // Blue Box for Session
+                    const sessCanvas = document.createElement('canvas');
+                    sessCanvas.width = width;
+                    sessCanvas.height = height;
+                    const sCtx = sessCanvas.getContext('2d');
+                    sCtx.fillStyle = "#3b82f6";
+                    sCtx.fillRect(375, 55, 80, 20); // Approx
+                    children.splice(children.length-1, 0, { name: "Session BG", canvas: sessCanvas }); // Insert before text
+
+                    // Discipline
+                    children.push(createTextLayer("Discipline:", "Label: Discipline", x_label, 90, 12, {r:180, g:0, b:0}, "Arial-BoldMT"));
+                    children.push(createTextLayer(document.getElementById('inDisc').value, "Value: Discipline", x_label + 60, 90, 12, {r:0, g:0, b:0}, "Arial-BoldMT"));
+
+                    // Name
+                    children.push(createTextLayer("Name:", "Label: Name", x_label, 110, 12, {r:30, g:41, b:59}, "Arial-BoldMT"));
+                    children.push(createTextLayer(document.getElementById('inName').value, "Value: Name", x_label + 40, 110, 12, {r:0, g:0, b:0}, "Arial-BoldMT"));
+
+                    // FName
+                    children.push(createTextLayer("FName:", "Label: FName", x_label, 130, 12, {r:30, g:41, b:59}, "Arial-BoldMT"));
+                    children.push(createTextLayer(document.getElementById('inFname').value, "Value: FName", x_label + 45, 130, 12, {r:0, g:0, b:0}, "Arial-BoldMT"));
+
+                    // Contact
+                    children.push(createTextLayer("C/No:", "Label: Contact", x_label, 150, 12, {r:30, g:41, b:59}, "Arial-BoldMT"));
+                    children.push(createTextLayer(document.getElementById('inContact').value, "Value: Contact", x_label + 35, 150, 12, {r:0, g:0, b:0}, "Arial-BoldMT"));
+
+                    // CNIC
+                    children.push(createTextLayer("CNIC No:", "Label: CNIC", x_label, 170, 12, {r:30, g:41, b:59}, "Arial-BoldMT"));
+                    children.push(createTextLayer(document.getElementById('inCnic').value, "Value: CNIC", x_label + 55, 170, 12, {r:0, g:0, b:0}, "Arial-BoldMT"));
+
+                    // Address
+                    children.push(createTextLayer("Address:", "Label: Address", x_label, 190, 12, {r:30, g:41, b:59}, "Arial-BoldMT"));
+                    // Address value might be long, handle simpler
+                    children.push(createTextLayer(document.getElementById('inAddr').value, "Value: Address", x_label + 55, 190, 11, {r:0, g:0, b:0}, "Arial-BoldMT"));
+
+                    // Footer
+                    children.push(createTextLayer("Ph: 0092-928-633817-18 Fax: 0092-928-633825", "Footer Phone", width/2, 285, 10, {r:50, g:50, b:50}, "Arial-BoldMT", "center"));
+                    children.push(createTextLayer("www.ustb.edu.pk", "Footer Web", width/2, 296, 10, {r:50, g:50, b:50}, "Arial-BoldMT", "center"));
+
+                } else {
+                    // BACK SIDE LAYERS
+                    children.push(createTextLayer(document.getElementById('inUniName').value, "Header: Uni Name", width/2, 28, 18, {r:255, g:255, b:255}, "Arial-BoldMT", "center"));
+
+                    // Logo Back
+                    const logoLayer = await getImageLayer('logoBack', 'Logo Back', 50, 100, 80, 80);
+                    if (logoLayer) children.push(logoLayer);
+
+                    // Issuing Authority Text
+                    children.push(createTextLayer("Issuing Authority", "Label: Authority", 350, 90, 14, {r:50, g:50, b:50}, "Arial-ItalicMT", "center"));
+
+                    // Signature
+                    const sigLayer = await getImageLayer('cardSig', 'Signature', 300, 100, 100, 50);
+                    if (sigLayer) children.push(sigLayer);
+
+                    // Line
+                    const lineCanvas = document.createElement('canvas');
+                    lineCanvas.width = width;
+                    lineCanvas.height = height;
+                    const lCtx = lineCanvas.getContext('2d');
+                    lCtx.strokeStyle = "#60a5fa";
+                    lCtx.lineWidth = 2;
+                    lCtx.beginPath();
+                    lCtx.moveTo(280, 155);
+                    lCtx.lineTo(420, 155);
+                    lCtx.stroke();
+                    children.push({ name: "Sig Line", canvas: lineCanvas });
+
+                    // Registrar
+                    children.push(createTextLayer("REGISTRAR", "Label: Registrar", 350, 175, 14, {r:30, g:41, b:59}, "Arial-BoldMT", "center"));
+
+                    // Barcode
+                    children.push(createTextLayer("*" + document.getElementById('inId').value + "*", "Barcode Text", width/2, 230, 48, {r:0, g:0, b:0}, "ArialMT", "center"));
+
+                    // Footer Info
+                    children.push(createTextLayer("CONTACT FOR INFORMATION", "Label: Contact", width/2, 270, 11, {r:220, g:38, b:38}, "Arial-BoldMT", "center"));
+                    children.push(createTextLayer("Office of Printing & Publications UST Bannu", "Footer Office", width/2, 282, 10, {r:30, g:41, b:59}, "Arial-BoldMT", "center"));
+                    children.push(createTextLayer("Ph: 0092-928-633817-18 Ext: 111", "Footer Phone", width/2, 294, 10, {r:30, g:41, b:59}, "Arial-BoldMT", "center"));
+                }
+
+                const psd = {
+                    width: width,
+                    height: height,
+                    children: children
+                };
+
+                const buffer = agPsd.writePsd(psd);
+                const blob = new Blob([buffer], { type: 'application/octet-stream' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `UST_${side === 'front' ? 'Front' : 'Back'}_Layered.psd`;
+                link.click();
+
+            } catch (e) {
+                console.error(e);
+                alert("Error generating layered PSD. Please ensure you are using a modern browser.");
+            }
+        }
+        
+        // Initial call
+        updateCards();
+    </script>
+</body>
+</html>
