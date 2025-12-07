@@ -46,7 +46,7 @@
 
         /* UST HEADER STYLE - BLUE */
         .ust-header {
-            background-color: #2c2c7b; /* Original Blue */
+            background-color: #2c2c7f; /* Original Blue */
             color: white;
             text-align: center;
             padding: 4px 0;
@@ -111,7 +111,7 @@
 
         /* SESSION TAG */
         .session-tag {
-            background-color: #2c2c7b;
+            background-color: #2c2c7f;
             color: white;
             padding: 4px 10px;
             font-weight: 600;
@@ -137,6 +137,32 @@
             margin-bottom: 2px;
             display: block;
         }
+
+        /* CUSTOM FILE INPUT BOX */
+        .file-input-box {
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 4px;
+            background: #f8fafc;
+            width: 100%;
+            font-size: 0.8rem;
+            color: #334155;
+        }
+        /* Removes default button styling in some browsers */
+        input[type=file]::file-selector-button {
+            margin-right: 10px;
+            border: none;
+            background: #e2e8f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #334155;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.75rem;
+        }
+        input[type=file]::file-selector-button:hover {
+            background: #cbd5e1;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -152,14 +178,34 @@
             <!-- INPUT FORM -->
             <div class="w-full lg:w-1/3 bg-white p-6 rounded-lg shadow-md">
                 
-                <!-- University Details Section -->
-                <h2 class="text-lg font-bold mb-4 border-b pb-2">University Details</h2>
+                <!-- 1. University Details Section -->
+                <h2 class="text-lg font-bold mb-4 border-b pb-2">1. University Details</h2>
                 <div class="mb-4 bg-slate-50 p-3 rounded border border-slate-200">
                     <label class="form-label">University Name</label>
                     <input type="text" id="inUniName" value="UNIVERSITY OF SCIENCE & TECHNOLOGY BANNU" class="form-input" oninput="updateCards()">
                     
                     <label class="form-label">University Address</label>
                     <input type="text" id="inUniAddr" value="Bannu Khyber Pakhtunkhwa, Pakistan" class="form-input" oninput="updateCards()">
+                </div>
+
+                <!-- 2. Front Card Footer Details -->
+                <h2 class="text-lg font-bold mb-4 border-b pb-2">2. Front Card Footer Details</h2>
+                <div class="mb-4 bg-slate-50 p-3 rounded border border-slate-200">
+                    <label class="form-label">Phone & Fax Line</label>
+                    <input type="text" id="inFrontPh" value="Ph: 0092-928-633817-18 Fax: 0092-928-633825" class="form-input" oninput="updateCards()">
+                    
+                    <label class="form-label">Website URL</label>
+                    <input type="text" id="inFrontWeb" value="www.ustb.edu.pk" class="form-input" oninput="updateCards()">
+                </div>
+
+                <!-- 3. Back Card Footer Details -->
+                <h2 class="text-lg font-bold mb-4 border-b pb-2">3. Back Card Footer Details</h2>
+                <div class="mb-4 bg-slate-50 p-3 rounded border border-slate-200">
+                    <label class="form-label">Office Name</label>
+                    <input type="text" id="inBackOffice" value="Office of Printing & Publications UST Bannu" class="form-input" oninput="updateCards()">
+                    
+                    <label class="form-label">Phone & Extension</label>
+                    <input type="text" id="inBackPh" value="Ph: 0092-928-633817-18 Ext: 111" class="form-input" oninput="updateCards()">
                 </div>
 
                 <h2 class="text-lg font-bold mb-4 border-b pb-2">Student Details</h2>
@@ -212,15 +258,15 @@
                     <input type="range" id="inSpacing" min="10" max="150" value="80" class="w-full h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer accent-blue-600" oninput="updateCards()">
                 </div>
 
-                <!-- Separate Logo Inputs -->
+                <!-- Separate Logo Inputs (Styled Boxes) -->
                 <div class="grid grid-cols-2 gap-3 mb-2">
                     <div>
                         <label class="form-label text-blue-600 font-bold"><i class="fas fa-image"></i> Front Logo</label>
-                        <input type="file" id="upLogoFront" accept="image/*" class="text-xs w-full border p-1 rounded" onchange="handleImage(this, 'logoFront')">
+                        <input type="file" id="upLogoFront" accept="image/*" class="file-input-box" onchange="handleImage(this, 'logoFront')">
                     </div>
                     <div>
                         <label class="form-label text-blue-600 font-bold"><i class="fas fa-image"></i> Back Logo</label>
-                        <input type="file" id="upLogoBack" accept="image/*" class="text-xs w-full border p-1 rounded" onchange="handleImage(this, 'logoBack')">
+                        <input type="file" id="upLogoBack" accept="image/*" class="file-input-box" onchange="handleImage(this, 'logoBack')">
                     </div>
                 </div>
 
@@ -231,13 +277,13 @@
                     </div>
                     <div>
                         <label class="form-label">Student Photo</label>
-                        <input type="file" id="upPhoto" accept="image/*" class="text-xs" onchange="handleImage(this, 'cardPhoto')">
+                        <input type="file" id="upPhoto" accept="image/*" class="file-input-box" onchange="handleImage(this, 'cardPhoto')">
                     </div>
                 </div>
                 
                 <div class="mt-4 pt-4 border-t">
                      <label class="form-label">Signature (For Back)</label>
-                     <input type="file" id="upSig" accept="image/*" class="text-xs mb-2" onchange="handleImage(this, 'cardSig')">
+                     <input type="file" id="upSig" accept="image/*" class="file-input-box mb-2" onchange="handleImage(this, 'cardSig')">
                 </div>
             </div>
 
@@ -322,12 +368,12 @@
                             </div>
                         </div>
 
-                        <!-- Footer Strip (Transparent) -->
+                        <!-- Footer Strip (Front - Updated) -->
                         <div class="absolute bottom-0 w-full text-center pb-1 z-20">
-                            <p class="text-[10px] text-slate-700 font-bold tracking-tight">
+                            <p id="outFrontPh" class="text-[10px] text-slate-700 font-bold tracking-tight">
                                 Ph: 0092-928-633817-18 Fax: 0092-928-633825
                             </p>
-                            <p class="text-[10px] text-slate-700 font-bold">www.ustb.edu.pk</p>
+                            <p id="outFrontWeb" class="text-[10px] text-slate-700 font-bold">www.ustb.edu.pk</p>
                         </div>
                     </div>
                     
@@ -393,11 +439,12 @@
                             </div>
                         </div>
 
-                        <!-- Bottom Footer Info -->
+                        <!-- Bottom Footer Info (Back - Updated) -->
                         <div class="absolute bottom-2 left-0 w-full text-center z-20">
-                            <p class="text-[11px] font-bold text-red-600 uppercase mb-0.5">Contact For Information</p>
-                            <p class="text-[10px] text-slate-800 font-bold leading-tight">
-                                Office of Printing & Publications UST Bannu<br>
+                            <p id="outBackOffice" class="text-[10px] text-slate-800 font-bold leading-tight">
+                                Office of Printing & Publications UST Bannu
+                            </p>
+                            <p id="outBackPh" class="text-[10px] text-slate-800 font-bold leading-tight">
                                 Ph: 0092-928-633817-18 Ext: 111
                             </p>
                         </div>
@@ -468,6 +515,12 @@
             setTxt('outUniNameFront', 'inUniName');
             setTxt('outUniAddrFront', 'inUniAddr');
             setTxt('outUniNameBack', 'inUniName');
+
+            // NEW: Footer Fields
+            setTxt('outFrontPh', 'inFrontPh');
+            setTxt('outFrontWeb', 'inFrontWeb');
+            setTxt('outBackOffice', 'inBackOffice');
+            setTxt('outBackPh', 'inBackPh');
 
             setTxt('outId', 'inId');
             setTxt('outSession', 'inSession');
@@ -662,7 +715,6 @@
 
                     // DATA FIELDS (Right Side)
                     const x_label = 160;
-                    const x_val = 160; // Labels and values in same block or separate? Let's use separate lines effectively
                     
                     // S/ID & Session
                     children.push(createTextLayer("S/ID: " + document.getElementById('inId').value, "S/ID", x_label, 70, 16, {r:0, g:0, b:0}, "Arial-BoldMT"));
@@ -702,9 +754,9 @@
                     // Address value might be long, handle simpler
                     children.push(createTextLayer(document.getElementById('inAddr').value, "Value: Address", x_label + 55, 190, 11, {r:0, g:0, b:0}, "Arial-BoldMT"));
 
-                    // Footer
-                    children.push(createTextLayer("Ph: 0092-928-633817-18 Fax: 0092-928-633825", "Footer Phone", width/2, 285, 10, {r:50, g:50, b:50}, "Arial-BoldMT", "center"));
-                    children.push(createTextLayer("www.ustb.edu.pk", "Footer Web", width/2, 296, 10, {r:50, g:50, b:50}, "Arial-BoldMT", "center"));
+                    // Footer (Updated)
+                    children.push(createTextLayer(document.getElementById('inFrontPh').value, "Footer Phone", width/2, 285, 10, {r:50, g:50, b:50}, "Arial-BoldMT", "center"));
+                    children.push(createTextLayer(document.getElementById('inFrontWeb').value, "Footer Web", width/2, 296, 10, {r:50, g:50, b:50}, "Arial-BoldMT", "center"));
 
                 } else {
                     // BACK SIDE LAYERS
@@ -740,10 +792,9 @@
                     // Barcode
                     children.push(createTextLayer("*" + document.getElementById('inId').value + "*", "Barcode Text", width/2, 230, 48, {r:0, g:0, b:0}, "ArialMT", "center"));
 
-                    // Footer Info
-                    children.push(createTextLayer("CONTACT FOR INFORMATION", "Label: Contact", width/2, 270, 11, {r:220, g:38, b:38}, "Arial-BoldMT", "center"));
-                    children.push(createTextLayer("Office of Printing & Publications UST Bannu", "Footer Office", width/2, 282, 10, {r:30, g:41, b:59}, "Arial-BoldMT", "center"));
-                    children.push(createTextLayer("Ph: 0092-928-633817-18 Ext: 111", "Footer Phone", width/2, 294, 10, {r:30, g:41, b:59}, "Arial-BoldMT", "center"));
+                    // Footer Info (Updated per user request)
+                    children.push(createTextLayer(document.getElementById('inBackOffice').value, "Footer Office", width/2, 282, 10, {r:30, g:41, b:59}, "Arial-BoldMT", "center"));
+                    children.push(createTextLayer(document.getElementById('inBackPh').value, "Footer Phone", width/2, 294, 10, {r:30, g:41, b:59}, "Arial-BoldMT", "center"));
                 }
 
                 const psd = {
