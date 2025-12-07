@@ -9,7 +9,7 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Libre+Barcode+39+Text&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Libre+Barcode+39+Text&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <!-- html2canvas for PNG download -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <!-- ag-psd for Layered PSD download -->
@@ -210,10 +210,15 @@
 
                 <h2 class="text-lg font-bold mb-4 border-b pb-2">Student Details</h2>
                 
-                <!-- Pattern Randomizer Button -->
-                <button onclick="randomizePattern()" class="w-full mb-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded shadow transition duration-200 flex justify-center items-center gap-2">
-                    <i class="fas fa-random"></i> Pick Random Pattern
-                </button>
+                <!-- Pattern Randomizer Button & Reset Data -->
+                <div class="flex gap-2 mb-4">
+                    <button onclick="randomizePattern()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded shadow transition duration-200 flex justify-center items-center gap-2">
+                        <i class="fas fa-random"></i> Pick Random Pattern
+                    </button>
+                    <button onclick="clearFormData()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow transition duration-200 flex justify-center items-center" title="Reset Saved Data">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -465,6 +470,47 @@
         </div>
     </div>
 
+    <!-- NEW FOOTER SECTION -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="h-1 w-full bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-emerald-500 rounded-full mb-8"></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Brand -->
+                <div class="text-center md:text-left bg-gray-900/40 rounded-xl p-6 ring-1 ring-white/5 hover:ring-indigo-500/30 transition">
+                    <h3 class="text-2xl font-bold mb-4"><span class="text-indigo-400">GEMINI</span> <span class="text-fuchsia-400">EDU</span></h3>
+                    <p class="text-gray-300 mb-4 text-base"><span class="text-red-400 font-semibold">⚠️ Demo for educational use only.</span></p>
+                    <p class="text-gray-400 text-xs">Free, open-source demo.</p>
+                </div>
+                <!-- Links -->
+                <div class="text-center md:text-left bg-gray-900/40 rounded-xl p-6 ring-1 ring-white/5 hover:ring-indigo-500/30 transition">
+                    <h4 class="text-lg font-semibold mb-4 text-yellow-400"><i class="fa-solid fa-link mr-2"></i>QUICK</h4>
+                    <div class="grid grid-cols-2 gap-6 text-sm">
+                        <ul class="space-y-2"><li><a href="#" class="hover:text-white">Home</a></li><li><a href="#" class="hover:text-white">About</a></li></ul>
+                        <ul><li><a href="#" class="hover:text-white">Contact</a></li></ul>
+                    </div>
+                </div>
+                <!-- Author -->
+                <div class="text-center md:text-left bg-gray-900/40 rounded-xl p-6 ring-1 ring-white/5 hover:ring-indigo-500/30 transition">
+                    <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
+                        <div class="relative">
+                            <div class="w-20 h-20 rounded-full overflow-hidden border-3 border-yellow-400 shadow-lg">
+                                <img src="https://i.ibb.co/VcLZ74s5/muhib.jpg" alt="MUHIB ULLAH" class="w-full h-full object-cover">
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-2 border-gray-800 rounded-full flex items-center justify-center"><i class="fa-solid fa-check text-white text-xs"></i></div>
+                        </div>
+                        <div class="text-center md:text-left">
+                            <h4 class="text-lg font-bold text-blue-400 mb-2" style="font-family: 'Dancing Script', cursive;">Author: MUHIB ULLAH</h4>
+                            <p class="text-gray-300 text-sm">Full-Stack Developer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center">
+                <p class="text-gray-400 text-sm">© 2025 All rights reserved · Made with <i class="fas fa-heart text-red-500"></i> by <span class="text-yellow-400">Muhib Ullah</span></p>
+            </div>
+        </div>
+    </footer>
+
     <script>
         // EXPANDED PATTERN COLLECTION
         const patterns = [
@@ -510,7 +556,48 @@
             if(pathBack) pathBack.setAttribute('d', selectedPath);
         }
 
+        // List of Input IDs to Save/Load
+        const inputIds = [
+            'inUniName', 'inUniAddr', 
+            'inFrontPh', 'inFrontWeb',
+            'inBackOffice', 'inBackPh',
+            'inId', 'inSession',
+            'inDisc', 'inName', 'inFname', 'inContact',
+            'inCnic', 'inAddr', 'inSpacing', 'inValid'
+        ];
+
+        function saveFormData() {
+            const data = {};
+            inputIds.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) data[id] = el.value;
+            });
+            localStorage.setItem('ust_card_data', JSON.stringify(data));
+        }
+
+        function loadFormData() {
+            const saved = localStorage.getItem('ust_card_data');
+            if (saved) {
+                const data = JSON.parse(saved);
+                inputIds.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && data[id] !== undefined) {
+                        el.value = data[id];
+                    }
+                });
+                updateCards(); // Refresh preview
+            }
+        }
+
+        function clearFormData() {
+            localStorage.removeItem('ust_card_data');
+            location.reload(); // Reload to reset to defaults
+        }
+
         function updateCards() {
+            // Save Data automatically
+            saveFormData();
+
             // New University Fields
             setTxt('outUniNameFront', 'inUniName');
             setTxt('outUniAddrFront', 'inUniAddr');
@@ -816,7 +903,8 @@
             }
         }
         
-        // Initial call
+        // Initial call - Load saved data
+        loadFormData();
         updateCards();
     </script>
 </body>
